@@ -6,22 +6,28 @@ math2001_init
 
 
 example {a : ℚ} (h : ∃ b : ℚ, a = b ^ 2 + 1) : a > 0 := by
-  obtain ⟨b, hb⟩ := h
+  obtain ⟨b,hb⟩ := h
   calc
-    a = b ^ 2 + 1 := hb
+    a = b ^ 2 + 1 := by rw [hb]
     _ > 0 := by extra
 
 
 example {t : ℝ} (h : ∃ a : ℝ, a * t < 0) : t ≠ 0 := by
   obtain ⟨x, hxt⟩ := h
   have H := le_or_gt x 0
-  obtain hx | hx := H
-  · have hxt' : 0 < (-x) * t := by addarith [hxt]
-    have hx' : 0 ≤ -x := by addarith [hx]
+  obtain h1 | h2 := H
+  . have hxt' : (-x) * t > 0 := by addarith [hxt]
+    have h1' : (-x) >= 0 := by addarith [h1]
     cancel -x at hxt'
     apply ne_of_gt
     apply hxt'
-  · sorry
+  . have hxt' : x * (-t) > 0 := calc
+      x * (-t) = (-x) * t := by ring
+      _ > 0 := by addarith [hxt]
+    cancel x at hxt'
+    have h1' : t < 0 := by addarith [hxt']
+    apply ne_of_lt
+    apply h1'
 
 example : ∃ n : ℤ, 12 * n = 84 := by
   use 7
@@ -34,40 +40,61 @@ example (x : ℝ) : ∃ y : ℝ, y > x := by
 
 
 example : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 11 := by
-  sorry
+  use 6,5
+  numbers
 
 example (a : ℤ) : ∃ m n : ℤ, m ^ 2 - n ^ 2 = 2 * a + 1 := by
-  sorry
+  use (a + 1), a
+  ring
 
 example {p q : ℝ} (h : p < q) : ∃ x, p < x ∧ x < q := by
-  sorry
+  use (p + q) / 2
+  constructor
+  . calc
+      p = (p + p) / 2 := by ring
+      _ < (p + q) / 2 := by rel [h]
+  . calc
+      q = (q + q) / 2 := by ring
+      _ > (p + q) / 2 := by rel [h]
 
 example : ∃ a b c d : ℕ,
     a ^ 3 + b ^ 3 = 1729 ∧ c ^ 3 + d ^ 3 = 1729 ∧ a ≠ c ∧ a ≠ d := by
-  use 1, 12, 9, 10
+  use 1,12,9,10
   constructor
-  numbers
-  constructor
-  numbers
-  constructor
-  numbers
-  numbers
+  . numbers
+  . constructor
+    . numbers
+    . constructor
+      . numbers
+      . numbers
 
 /-! # Exercises -/
 
 
 example : ∃ t : ℚ, t ^ 2 = 1.69 := by
-  sorry
+  use 1.3
+  ring
+
 example : ∃ m n : ℤ, m ^ 2 + n ^ 2 = 85 := by
-  sorry
+  use 6, 7
+  ring
 
 example : ∃ x : ℝ, x < 0 ∧ x ^ 2 < 1 := by
-  sorry
+  use -0.5
+  constructor
+  . numbers
+  . numbers
+
 example : ∃ a b : ℕ, 2 ^ a = 5 * b + 1 := by
-  sorry
+  use 4, 3
+  numbers
 
 example (x : ℚ) : ∃ y : ℚ, y ^ 2 > x := by
-  sorry
+  use (x + 1/2)
+  calc
+    (x + 1/2) ^ 2 = x ^ 2 + x + 1/4 := by ring
+    _ = x + (x ^ 2 + 1/4) := by ring
+    _ > x := by extra
 
 example {t : ℝ} (h : ∃ a : ℝ, a * t + 1 < a + t) : t ≠ 1 := by
   sorry
